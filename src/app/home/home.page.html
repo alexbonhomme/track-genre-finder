@@ -1,38 +1,54 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
-      Genre Finder
+      Track Genre Finder
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
   <div *ngIf="!spotify.isLogged">
     <ion-button color="success" (click)="spotify.login()">Spotify login</ion-button>
   </div>
 
   <div>
-    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
-      <ion-item>
-        <ion-label position="floating">Artist</ion-label>
-        <ion-input formControlName="artist"></ion-input>
-      </ion-item>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <h2>Track search</h2>
+          <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+            <ion-item>
+              <ion-label position="floating">Artist</ion-label>
+              <ion-input formControlName="artist"></ion-input>
+            </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Track name</ion-label>
-        <ion-input formControlName="trackName"></ion-input>
-      </ion-item>
+            <ion-item>
+              <ion-label position="floating">Track name</ion-label>
+              <ion-input formControlName="trackName"></ion-input>
+            </ion-item>
 
-      <ion-button color="primary" type="submit">Search</ion-button>
-    </form>
+            <ion-button color="primary" type="submit">Search</ion-button>
+          </form>
+        </ion-col>
+
+        <ion-col>
+          <h2>Playlist analyser</h2>
+          <form>
+            <input
+              type="file"
+              (change)="onFileChange($event)">
+          </form>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-progress-bar  *ngIf="loading" type="indeterminate"></ion-progress-bar>
 
     <ion-list>
+      <ion-list-header *ngIf="trackCollection.length" lines="inset">
+        <ion-label>{{ trackCollection.length }} founds</ion-label>
+      </ion-list-header>
+
       <ion-item *ngFor="let track of trackCollection">
         <ion-avatar slot="start">
           <img [src]="track.coverUrl">
@@ -40,8 +56,8 @@
         <ion-label>
           <h2>{{ track.name }}</h2>
           <h3>{{ track.artistName  }} <small>({{ track.albumName }})</small></h3>
-          <p>Itunes: {{ track.genre.itunes }}</p>
-          <p>Spotify: {{ track.genre.spotify }}</p>
+          <p>Itunes: {{ track.genre?.itunes }}</p>
+          <p>Spotify: {{ track.genre?.spotify }}</p>
         </ion-label>
       </ion-item>
     </ion-list>

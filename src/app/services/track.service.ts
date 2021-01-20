@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, of, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { forkJoin, of, Observable, merge } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { Track } from '../models/track';
 import { ItunesService } from './itunes.service';
 import { SpotifyService } from './spotify.service';
@@ -18,26 +18,56 @@ export class TrackService {
   fetchTrack(
     artist: string,
     name: string
-  ): Observable<Track[]> {
+  ): Observable<Track> {
     return this.itunesService.searchTrack(artist, name).pipe(
       mergeMap(trackCollection => {
+        // if not found on itunes, fetch from spotify
         if (trackCollection.length === 0) {
-          return of([]);
+          if (!this.spotifyService.isLogged) {
+            throw new Error('spotify-disconnected')
+          }
+
+          return this.spotifyService.searchTrack(artist, name);
         }
 
-        return forkJoin(
-          trackCollection.map(track =>
-            this.fetchGenresFromSpotify(track.artistName).pipe(
-              map(genres => {
-                track.genre.spotify = genres;
+        return of(trackCollection);
+      }),
+      mergeMap(trackCollection => {
+        if (trackCollection.length === 0) {
+          return of(undefined);
+        }
 
-                return track;
-              })
-            )
-          )
-        )
-      }
+        // get the first one only to not kill spotify API
+        const track = trackCollection[0];
+
+        // if spotify not logged keep only itunes data
+        if (!this.spotifyService.isLogged) {
+          return of(track);
+        }
+
+        // return forkJoin(
+        //   trackCollection.map(track =>
+        //     this.fetchGenresFromSpotify(track.artistName).pipe(
+        //       map(genres => {
+        //         track.genre.spotify = genres;
+
+        //         return track;
+        //       })
+        //     )
+        //   )
+        // );
+
+        return this.fetchGenresFromSpotify(track.artistName).pipe(
+            map(genres => {
+              track.genre.spotify = genres;
+
+              return track;
+            })
+          );
+        }
       ),
+      // removes track not found
+      filter(track => !!track)
     );
   }
 

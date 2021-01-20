@@ -4,6 +4,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
+import { Track } from '../models/track';
 
 /**
  * Obtains parameters from the hash of the URL
@@ -129,7 +130,7 @@ export class SpotifyService {
   /**
    *
    */
-  searchTrack(artist: string, name: string): Observable<any[]> {
+  searchTrack(artist: string, name: string): Observable<Track[]> {
     const url = `https://api.spotify.com/v1/search?q=artist:${artist}%20track:${name}&type=track`;
 
     return this.http.get(url,
@@ -141,32 +142,13 @@ export class SpotifyService {
       map((response: any) => {
         return response.tracks.items.map(track => {
           return {
-            ...track,
-            artistsString: track.artists.map(el => el.name).join(', ')
+            name: track.name,
+            artistName: track.artists.map(el => el.name).join(', '),
+            genre: {},
+            albumName: track.album.name,
+            coverUrl: track.images[0].url
           };
         });
-      }),
-      mergeMap((trackCollection) => {
-        return forkJoin(trackCollection.map(track => {
-          const artistIds = track.artists.map(el => el.id).join(',');
-
-          return this.http.get(
-            `https://api.spotify.com/v1/artists?ids=${artistIds}`,
-            {
-              headers: {
-                Authorization: 'Bearer ' + this.accessToken
-              }
-            }
-          ).pipe(
-            map((artistsResponse: any) => {
-              return {
-                ...track,
-                artists: artistsResponse.artists,
-                genresString: artistsResponse.artists.map(el => el.genres.join(', ')).join(' - ')
-              }
-            })
-          )
-        }))
       })
     );
   }

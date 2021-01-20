@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { Track } from '../models/track';
 import { ItunesService } from './itunes.service';
 import { SpotifyService } from './spotify.service';
@@ -18,9 +18,29 @@ export class TrackService {
   fetchTrack(
     artist: string,
     name: string
-  ): Observable<Track> {
+  ): Observable<Track[]> {
     return this.itunesService.searchTrack(artist, name).pipe(
-      map(trackCollection => trackCollection[0])
+      mergeMap(trackCollection =>
+        forkJoin(
+          trackCollection.map(track =>
+            this.fetchGenresFromSpotify(track.artistName).pipe(
+              map(genres => {
+                track.genre.spotify = genres;
+
+                return track;
+              })
+            )
+          )
+        )
+      ),
+    );
+  }
+
+  private fetchGenresFromSpotify(artistName: string): Observable<string> {
+    return this.spotifyService.searchArtist(artistName).pipe(
+      map((spotifyArtist: any) => {
+        return spotifyArtist[0].genres.join(', ');
+      })
     );
   }
 }

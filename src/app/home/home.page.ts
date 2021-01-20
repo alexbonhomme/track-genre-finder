@@ -33,8 +33,8 @@ export class HomePage {
     // this.searchTrackItunes(formValue.artist, formValue.trackName);
     // this.searchArtist(formValue.artist);
 
-    this.trackService.fetchTrack(formValue.artist, formValue.trackName).subscribe(track => {
-      this.trackCollection = [track];
+    this.trackService.fetchTrack(formValue.artist, formValue.trackName).subscribe(trackCollection => {
+      this.trackCollection = trackCollection;
     });;
   }
 }

@@ -17,7 +17,7 @@
     <ion-button color="success" (click)="spotify.login()">Spotify login</ion-button>
   </div>
 
-  <div *ngIf="spotify.isLogged">
+  <div>
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
       <ion-item>
         <ion-label position="floating">Artist</ion-label>
@@ -39,8 +39,7 @@
         </ion-avatar>
         <ion-label>
           <h2>{{ track.name }}</h2>
-          <h3>{{ track.artistName  }}</h3>
-          <p>{{ track.albumName }}</p>
+          <h3>{{ track.artistName  }} <small>({{ track.albumName }})</small></h3>
           <p>Itunes: {{ track.genre.itunes }}</p>
           <p>Spotify: {{ track.genre.spotify }}</p>
         </ion-label>

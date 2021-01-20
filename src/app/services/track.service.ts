@@ -24,7 +24,7 @@ export class TrackService {
         // if not found on itunes, fetch from spotify
         if (trackCollection.length === 0) {
           if (!this.spotifyService.isLogged) {
-            throw new Error('spotify-disconnected')
+            return of(undefined);
           }
 
           return this.spotifyService.searchTrack(artist, name);

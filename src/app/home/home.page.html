@@ -7,7 +7,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div *ngIf="!spotify.isLogged">
+  <div *ngIf="!spotify.isLogged" class="ion-margin">
+    <div>
+      <ion-note>Connect with Spotify to improve data quality</ion-note>
+    </div>
     <ion-button color="success" (click)="spotify.login()">Spotify login</ion-button>
   </div>
 
@@ -32,7 +35,7 @@
         </ion-col>
 
         <ion-col>
-          <h2>Playlist analyser</h2>
+          <h2>Playlist analyser <small>(only <code>.nml</code> format)</small></h2>
           <form>
             <input
               type="file"
@@ -46,7 +49,7 @@
 
     <ion-list>
       <ion-list-header *ngIf="trackCollection.length" lines="inset">
-        <ion-label>{{ trackCollection.length }} founds</ion-label>
+        <ion-label>{{ trackCollection.length }} tracks founds on APIs (iTunes and Spotify)</ion-label>
       </ion-list-header>
 
       <ion-item *ngFor="let track of trackCollection">

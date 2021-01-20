@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, of, Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { Track } from '../models/track';
 import { ItunesService } from './itunes.service';
@@ -20,8 +20,12 @@ export class TrackService {
     name: string
   ): Observable<Track[]> {
     return this.itunesService.searchTrack(artist, name).pipe(
-      mergeMap(trackCollection =>
-        forkJoin(
+      mergeMap(trackCollection => {
+        if (trackCollection.length === 0) {
+          return of([]);
+        }
+
+        return forkJoin(
           trackCollection.map(track =>
             this.fetchGenresFromSpotify(track.artistName).pipe(
               map(genres => {
@@ -32,6 +36,7 @@ export class TrackService {
             )
           )
         )
+      }
       ),
     );
   }

@@ -131,45 +131,29 @@ export class SpotifyService {
    *
    */
   searchTrack(artist: string, name: string): Observable<Track[]> {
-    const url = `https://api.spotify.com/v1/search?q=artist:${artist}%20track:${name}&type=track`;
+    const url = `${environment.apiUrl}/spotify/search`;
 
-    return this.http.get(url,
-    {
-      headers: {
-        Authorization: 'Bearer ' + this.accessToken
-      }
-    }).pipe(
-      map((response: any) => {
-        return response.tracks.items.map(track => {
-          return {
-            name: track.name,
-            artistName: track.artists.map(el => el.name).join(', '),
-            genre: {},
-            albumName: track.album.name,
-            coverUrl: track.images[0].url
-          };
-        });
-      })
-    );
+    return this.http.post<Track[]>(url, {
+      name,
+      artist
+    });
   }
 
-  searchArtist(artistName: string): Observable<any[]> {
-    const url = `https://api.spotify.com/v1/search?q=${artistName}&type=artist`;
+  searchArtist(name: string): Observable<any[]> {
+    const url = `${environment.apiUrl}/spotify/search/artist`;
 
-    return this.http.get(url,
-    {
-      headers: {
-        Authorization: 'Bearer ' + this.accessToken
-      }
-    }).pipe(
-      map((response: any) => {
-        return response.artists.items.map(artist => {
-          return {
-            ...artist,
-            genresString: artist.genres.join(', ')
-          };
-        });
-      }),
-    )
+    return this.http.post<any[]>(url, {
+      name
+    });
+    // .pipe(
+    //   map((response: any) => {
+    //     return response.artists.items.map(artist => {
+    //       return {
+    //         ...artist,
+    //         genresString: artist.genres.join(', ')
+    //       };
+    //     });
+    //   }),
+    // )
   }
 }

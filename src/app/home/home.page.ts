@@ -15,6 +15,7 @@ import { combineLatest, concat, forkJoin, from, of } from 'rxjs';
 export class HomePage {
   trackCollection = [];
   loading = false;
+  trackAnalysed = 0;
 
   searchForm = this.formBuilder.group({
     artist: '',
@@ -34,8 +35,10 @@ export class HomePage {
 
     const formValue = this.searchForm.value;
 
-    this.trackService.fetchTrack(formValue.artist, formValue.trackName).subscribe(trackCollection => {
-      this.trackCollection = [trackCollection];
+    this.trackService.fetchTrack(formValue.artist, formValue.trackName).subscribe(track => {
+      if (track) {
+        this.trackCollection = [track];
+      }
 
       this.loading = false;
     }, () => this.loading = false);
@@ -55,19 +58,23 @@ export class HomePage {
     this.loading = true;
     this.trackCollection = [];
 
-    let trackAnalysed = 0;
+    this.trackAnalysed = 0;
     const trackList = this.trackListService.parse(fileAsText);
+
+    console.log(trackList)
 
     concat(
       ...trackList.map(track =>
         this.trackService.fetchTrack(track.artistName, track.name).pipe(
-          tap(() => trackAnalysed++)
+          tap(() => this.trackAnalysed++)
         )
       ),
     ).subscribe(track => {
-      this.trackCollection.push(track);
+      if (track) {
+        this.trackCollection.push(track);
+      }
 
-      this.loading = trackAnalysed !== trackList.length;
+      this.loading = this.trackAnalysed !== trackList.length;
     }, () => this.loading = false);
 
     // forkJoin(

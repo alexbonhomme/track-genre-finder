@@ -23,10 +23,6 @@ export class TrackService {
       mergeMap(trackCollection => {
         // if not found on itunes, fetch from spotify
         if (trackCollection.length === 0) {
-          if (!this.spotifyService.isLogged) {
-            return of(undefined);
-          }
-
           return this.spotifyService.searchTrack(artist, name);
         }
 
@@ -39,11 +35,6 @@ export class TrackService {
 
         // get the first one only to not kill spotify API
         const track = trackCollection[0];
-
-        // if spotify not logged keep only itunes data
-        if (!this.spotifyService.isLogged) {
-          return of(track);
-        }
 
         // return forkJoin(
         //   trackCollection.map(track =>
@@ -67,7 +58,7 @@ export class TrackService {
         }
       ),
       // removes track not found
-      filter(track => !!track)
+      // filter(track => !!track)
     );
   }
 

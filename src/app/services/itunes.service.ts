@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Track } from '../models/track';
 
 @Injectable({
@@ -17,23 +18,11 @@ export class ItunesService {
     artist: string,
     name: string
   ): Observable<Track[]> {
-    const query = `${artist} ${name}`.replace(/ /g, '+');
-    const url = `https://itunes.apple.com/search?entity=song&term=${encodeURI(query)}`;
+    const url = `${environment.apiUrl}/itunes/search`;
 
-    return this.http.get<Track[]>(url).pipe(
-      map((response: any) => {
-        return response.results.map(song => {
-          return {
-            name: song.trackName,
-            artistName: song.artistName,
-            genre: {
-              itunes: song.primaryGenreName,
-            },
-            albumName: song.collectionName,
-            coverUrl: song.artworkUrl100
-          };
-        });
-      }),
-    );
+    return this.http.post<Track[]>(url, {
+      name,
+      artist
+    });
   }
 }

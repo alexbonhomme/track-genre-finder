@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:3000',
   spotify: {
     clientId: 'f6ebc72815c048c3acd8a4edbb8a9765',
     redirectUri: 'http://localhost:8100/',

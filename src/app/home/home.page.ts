@@ -66,6 +66,7 @@ export class HomePage {
     concat(
       ...trackList.map(track =>
         this.trackService.fetchTrack(track.artistName, track.name).pipe(
+          delay(1000),
           tap(() => this.trackAnalysed++)
         )
       ),

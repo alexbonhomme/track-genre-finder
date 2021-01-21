@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { forkJoin, of, Observable, merge } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap } from 'rxjs/operators';
 import { Track } from '../models/track';
 import { ItunesService } from './itunes.service';
 import { SpotifyService } from './spotify.service';
@@ -20,6 +20,14 @@ export class TrackService {
     name: string
   ): Observable<Track> {
     return this.itunesService.searchTrack(artist, name).pipe(
+      catchError((error) => {
+        // avoid blocking analays of big playlists
+        if (error.code === 403) {
+          return of([]);
+        }
+
+        throw error;
+      }),
       mergeMap(trackCollection => {
         // if not found on itunes, fetch from spotify
         if (trackCollection.length === 0) {

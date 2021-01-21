@@ -64,8 +64,12 @@ export class TrackService {
 
   private fetchGenresFromSpotify(artistName: string): Observable<string> {
     return this.spotifyService.searchArtist(artistName).pipe(
-      map((spotifyArtist: any) => {
-        return spotifyArtist[0].genres.join(', ');
+      map((collection: any) => {
+        if (collection.length === 0) {
+          return '';
+        }
+
+        return collection[0].genres.join(', ');
       })
     );
   }

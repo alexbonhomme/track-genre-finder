@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
-import { combineAll, concatMap, delay, map, tap } from 'rxjs/operators';
+import { delay, tap } from 'rxjs/operators';
 import { TrackService } from '../services/track.service';
 import { SpotifyService } from '../services/spotify.service';
 import { TrackListService } from '../services/track-list.service';
-import { combineLatest, concat, forkJoin, from, of } from 'rxjs';
+import { concat } from 'rxjs';
 
 @Component({
   selector: 'app-home',

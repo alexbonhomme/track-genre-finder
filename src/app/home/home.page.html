@@ -49,18 +49,32 @@
       <ion-list-header *ngIf="trackCollection.length" lines="inset">
         <ion-label>
           <p *ngIf="trackAnalysed">{{ trackAnalysed }} tracks analysed from playlist</p>
-          <p>{{ trackCollection.length }} tracks founds on APIs (iTunes and Spotify)</p></ion-label>
+          <p>{{ trackCollection.length }} tracks founds on APIs (iTunes, Spotify and Deezer)</p></ion-label>
       </ion-list-header>
 
       <ion-item *ngFor="let track of trackCollection">
-        <ion-avatar slot="start">
+        <!-- <ion-avatar slot="start">
           <img [src]="track.coverUrl">
-        </ion-avatar>
+        </ion-avatar> -->
         <ion-label>
-          <h2>{{ track.name }}</h2>
-          <h3>{{ track.artistName  }} <small>({{ track.albumName }})</small></h3>
-          <p>Itunes: {{ track.genre?.itunes }}</p>
-          <p>Spotify: {{ track.genre?.spotify }}</p>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <h2>{{ track.name }}</h2>
+                <h3>{{ track.artistName  }}</h3>
+              </ion-col>
+              <ion-col size="5">
+                  <ion-label color="primary">iTunes</ion-label>
+                  <p *ngIf="track.genre?.itunes">{{ track.genre?.itunes || 'No result' }}</p>
+
+                  <ion-label color="primary">Spotify</ion-label>
+                  <p>{{ track.genre?.spotify || 'No result'  }}</p>
+
+                  <ion-label color="primary">Deezer</ion-label>
+                  <p>{{ track.genre?.deezer || 'No result'  }}</p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
         </ion-label>
       </ion-item>
     </ion-list>

@@ -35,7 +35,7 @@ export class HomePage {
 
     const formValue = this.searchForm.value;
 
-    this.trackService.fetchTrack(formValue.artist, formValue.trackName).subscribe(track => {
+    this.trackService.analyzeTrack(formValue.trackName, formValue.artist).subscribe(track => {
       if (track) {
         this.trackCollection = [track];
       }
@@ -65,7 +65,7 @@ export class HomePage {
 
     concat(
       ...trackList.map(track =>
-        this.trackService.fetchTrack(track.artistName, track.name).pipe(
+        this.trackService.analyzeTrack(track.name, track.artistName).pipe(
           delay(1000),
           tap(() => this.trackAnalysed++)
         )

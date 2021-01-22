@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, mergeMap } from 'rxjs/operators';
-import { forkJoin, Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { Track } from '../models/track';
 
 /**
  * Obtains parameters from the hash of the URL
@@ -125,35 +122,5 @@ export class SpotifyService {
     const url = `https://accounts.spotify.com/authorize?response_type=token&client_id=${encodeURIComponent(environment.spotify.clientId)}&scope=${encodeURIComponent(SCOPE)}&redirect_uri=${encodeURIComponent(environment.spotify.redirectUri)}&state=${encodeURIComponent(state)}`;
 
     window.location.assign(url);
-  }
-
-  /**
-   *
-   */
-  searchTrack(artist: string, name: string): Observable<Track[]> {
-    const url = `${environment.apiUrl}/spotify/search`;
-
-    return this.http.post<Track[]>(url, {
-      name,
-      artist
-    });
-  }
-
-  searchArtist(name: string): Observable<any[]> {
-    const url = `${environment.apiUrl}/spotify/search/artist`;
-
-    return this.http.post<any[]>(url, {
-      name
-    });
-    // .pipe(
-    //   map((response: any) => {
-    //     return response.artists.items.map(artist => {
-    //       return {
-    //         ...artist,
-    //         genresString: artist.genres.join(', ')
-    //       };
-    //     });
-    //   }),
-    // )
   }
 }

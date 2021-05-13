@@ -7,5 +7,6 @@ export class Track {
     spotify?: string
     itunes?: string,
     deezer?: string,
+    discogs?: string,
   } = {};
 }
